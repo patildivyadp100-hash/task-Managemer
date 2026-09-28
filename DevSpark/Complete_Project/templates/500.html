@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}500 — Server Error — TaskFlow{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-card">
+        <div class="error-code text-danger">500</div>
+        <h1 class="error-title">Internal Server Error</h1>
+        <p class="error-message">
+            Something unexpected occurred on the server. In production mode (Module 23),
+            detailed internal stack traces are hidden from users for security.
+        </p>
+        <div class="error-actions">
+            <a href="{{ url_for('tasks.home') }}" class="btn btn-primary">Return to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

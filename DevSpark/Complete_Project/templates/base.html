@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TaskFlow — Task Management Backend{% endblock %}</title>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('tasks.home') }}" class="brand-logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">TaskFlow</span>
+                <span class="version-tag">v1.0</span>
+            </a>
+
+            <nav class="nav-links">
+                <a href="{{ url_for('tasks.home') }}" class="nav-item {% if request.endpoint == 'tasks.home' %}active{% endif %}">Dashboard</a>
+                <a href="{{ url_for('tasks.list_tasks') }}" class="nav-item {% if request.endpoint == 'tasks.list_tasks' %}active{% endif %}">Tasks</a>
+                <a href="{{ url_for('tasks.add_task') }}" class="nav-btn-primary">+ New Task</a>
+                <a href="{{ url_for('tasks.about') }}" class="nav-item {% if request.endpoint == 'tasks.about' %}active{% endif %}">API Docs</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Flash Messages (Module 13) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash-alert flash-{{ category }}">
+                            <span class="flash-icon">
+                                {% if category == 'success' %}✓{% elif category == 'error' %}⚠️{% else %}ℹ️{% endif %}
+                            </span>
+                            <span class="flash-message">{{ message }}</span>
+                            <button class="flash-close" onclick="this.parentElement.remove();">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Content Block -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p><strong>TaskFlow</strong> — Production-Ready Flask Backend & REST API</p>
+            <p class="footer-subtext">Built with Flask 3, SQLite, WTForms, and Gunicorn &bull; Ready for Render & Vercel</p>
+        </div>
+    </footer>
+</body>
+</html>

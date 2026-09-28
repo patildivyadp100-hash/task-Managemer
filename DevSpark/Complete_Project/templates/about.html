@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}About & API Reference — TaskFlow{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">About TaskFlow & REST API Reference</h1>
+        <p class="page-subtitle">Architecture overview and comprehensive REST API endpoint documentation.</p>
+    </div>
+</div>
+
+<!-- Architecture Card -->
+<div class="section-card mb-4">
+    <h2 class="section-title">Project Architecture (Modules 18 — 26)</h2>
+    <p>TaskFlow is a production-ready web application and REST API built with Flask, SQLite, and WTForms following clean software architecture principles:</p>
+    
+    <div class="arch-grid">
+        <div class="arch-box">
+            <h4>📁 app.py</h4>
+            <p>Application factory, central config loading, blueprint registration, and global error handlers.</p>
+        </div>
+        <div class="arch-box">
+            <h4>📁 database.py</h4>
+            <p>SQLite schema initialization, connection management via row factory, and complete CRUD SQL queries.</p>
+        </div>
+        <div class="arch-box">
+            <h4>📁 models.py</h4>
+            <p>Data conversion layer transforming SQLite rows into JSON dictionaries, plus domain status constants.</p>
+        </div>
+        <div class="arch-box">
+            <h4>📁 forms.py</h4>
+            <p>Flask-WTF forms providing CSRF protection and server-side validation rules.</p>
+        </div>
+        <div class="arch-box">
+            <h4>📁 routes/</h4>
+            <p>Modular Flask Blueprints separating Task views/APIs (task_routes.py) from User endpoints (user_routes.py).</p>
+        </div>
+        <div class="arch-box">
+            <h4>📁 config.py</h4>
+            <p>Production environment configuration managing SECRET_KEY, DATABASE path, and DEBUG mode.</p>
+        </div>
+    </div>
+</div>
+
+<!-- REST API Documentation (Module 20 & 21) -->
+<div class="section-card mb-4">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">REST API Endpoints</h2>
+            <p class="section-subtitle">All endpoints accept and return JSON with standard HTTP status codes.</p>
+        </div>
+        <span class="badge badge-in_progress">Content-Type: application/json</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 100px;">Method</th>
+                    <th style="width: 250px;">Endpoint</th>
+                    <th>Description</th>
+                    <th style="width: 160px;">Success Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="method-tag method-post">POST</span></td>
+                    <td class="font-mono">/api/users</td>
+                    <td>Create a new user (requires <code>name</code> and <code>email</code>).</td>
+                    <td><span class="badge badge-completed">201 Created</span></td>
+                </tr>
+                <tr>
+                    <td><span class="method-tag method-get">GET</span></td>
+                    <td class="font-mono">/api/users</td>
+                    <td>Retrieve all registered users.</td>
+                    <td><span class="badge badge-completed">200 OK</span></td>
+                </tr>
+                <tr>
+                    <td><span class="method-tag method-get">GET</span></td>
+                    <td class="font-mono">/api/users/&lt;id&gt;</td>
+                    <td>Retrieve single user by ID. Returns 404 if not found.</td>
+                    <td><span class="badge badge-completed">200 OK</span></td>
+                </tr>
+                <tr>
+                    <td><span class="method-tag method-get">GET</span></td>
+                    <td class="font-mono">/api/users/&lt;id&gt;/tasks</td>
+                    <td>List all tasks assigned to a specific user (User–Task relation).</td>
+                    <td><span class="badge badge-completed">200 OK</span></td>
+                </tr>
+                <tr>
+                    <td><span class="method-tag method-post">POST</span></td>
+                    <td class="font-mono">/api/tasks</td>
+                    <td>Create a new task. Requires <code>title</code>; optional <code>description</code>, <code>status</code>, <code>user_id</code>.</td>
+                    <td><span class="badge badge-completed">201 Created</span></td>
+                </tr>
+                <tr>
+                    <td><span class="method-tag method-get">GET</span></td>
+                    <td class="font-mono">/api/tasks</td>
+                    <td>Retrieve all tasks. Supports filtering via <code>?status=pending</code>.</td>
+                    <td><span class="badge badge-completed">200 OK</span></td>
+                </tr>
+                <tr>
+                    <td><span class="method-tag method-get">GET</span></td>
+                    <td class="font-mono">/api/tasks/&lt;id&gt;</td>
+                    <td>Retrieve single task by ID. Returns 404 if not found.</td>
+                    <td><span class="badge badge-completed">200 OK</span></td>
+                </tr>
+                <tr>
+                    <td><span class="method-tag method-put">PUT</span></td>
+                    <td class="font-mono">/api/tasks/&lt;id&gt;</td>
+                    <td>Update task title, description, status, or assigned user.</td>
+                    <td><span class="badge badge-completed">200 OK</span></td>
+                </tr>
+                <tr>
+                    <td><span class="method-tag method-delete">DELETE</span></td>
+                    <td class="font-mono">/api/tasks/&lt;id&gt;</td>
+                    <td>Permanently delete a task by ID. Returns 404 if not found.</td>
+                    <td><span class="badge badge-completed">200 OK</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Sample Testing Commands -->
+<div class="section-card">
+    <h2 class="section-title">Quick Testing with cURL / PowerShell</h2>
+    
+    <div class="code-sample-box">
+        <div class="code-title">1. Create a User (POST /api/users)</div>
+        <pre class="code-block">curl -X POST http://127.0.0.1:5000/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Alice Smith", "email": "alice@example.com"}'</pre>
+    </div>
+
+    <div class="code-sample-box">
+        <div class="code-title">2. Create a Task (POST /api/tasks)</div>
+        <pre class="code-block">curl -X POST http://127.0.0.1:5000/api/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Deploy to Render", "description": "Configure Gunicorn and live DB", "status": "in_progress", "user_id": 1}'</pre>
+    </div>
+
+    <div class="code-sample-box">
+        <div class="code-title">3. Filter Tasks by Status (GET /api/tasks?status=in_progress)</div>
+        <pre class="code-block">curl -X GET "http://127.0.0.1:5000/api/tasks?status=in_progress"</pre>
+    </div>
+</div>
+{% endblock %}

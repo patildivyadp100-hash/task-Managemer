@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Tasks List — TaskFlow{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Tasks Management</h1>
+        <p class="page-subtitle">View, search, filter, and manage tasks backed by SQLite persistence.</p>
+    </div>
+    <div>
+        <a href="{{ url_for('tasks.add_task') }}" class="btn btn-primary">+ Add New Task</a>
+    </div>
+</div>
+
+<!-- Controls: Filter Tabs + Search Bar -->
+<div class="controls-bar">
+    <!-- Status Filter Tabs (Module 12: Query Parameters) -->
+    <div class="filter-tabs">
+        <a href="{{ url_for('tasks.list_tasks') }}" 
+           class="tab-item {% if not current_status and not search_query %}active{% endif %}">
+            All ({{ counts.total }})
+        </a>
+        <a href="{{ url_for('tasks.list_tasks', status='pending') }}" 
+           class="tab-item {% if current_status == 'pending' %}active{% endif %}">
+            Pending ({{ counts.pending }})
+        </a>
+        <a href="{{ url_for('tasks.list_tasks', status='in_progress') }}" 
+           class="tab-item {% if current_status == 'in_progress' %}active{% endif %}">
+            In Progress ({{ counts.in_progress }})
+        </a>
+        <a href="{{ url_for('tasks.list_tasks', status='completed') }}" 
+           class="tab-item {% if current_status == 'completed' %}active{% endif %}">
+            Completed ({{ counts.completed }})
+        </a>
+    </div>
+
+    <!-- Search Form (Module 12: Query Parameters) -->
+    <form action="{{ url_for('tasks.search') }}" method="GET" class="search-form">
+        <input type="text" name="q" value="{{ search_query or '' }}" 
+               placeholder="Search by title or description..." class="search-input">
+        {% if current_status %}
+            <input type="hidden" name="status" value="{{ current_status }}">
+        {% endif %}
+        <button type="submit" class="btn btn-secondary btn-search">Search</button>
+        {% if search_query %}
+            <a href="{{ url_for('tasks.list_tasks', status=current_status) }}" class="btn-clear-search">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+{% if search_query %}
+    <div class="search-notice">
+        Showing search results for: <strong>"{{ search_query }}"</strong>
+        {% if current_status %} in <em>{{ current_status }}</em>{% endif %}
+        &bull; <a href="{{ url_for('tasks.list_tasks') }}">Reset filter</a>
+    </div>
+{% endif %}
+
+<!-- Tasks Table -->
+<div class="section-card">
+    {% if tasks %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">ID</th>
+                        <th>Title</th>
+                        <th style="width: 140px;">Status</th>
+                        <th style="width: 180px;">Assigned User</th>
+                        <th style="width: 160px;">Date Created</th>
+                        <th style="width: 160px; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                        <tr>
+                            <td class="font-mono text-muted">#{{ task.id }}</td>
+                            <td>
+                                <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="task-title-link">
+                                    {{ task.title }}
+                                </a>
+                                {% if task.description %}
+                                    <div class="task-desc-preview">{{ task.description[:75] }}{% if task.description|length > 75 %}...{% endif %}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge badge-{{ task.status }}">
+                                    {{ task.status|replace('_', ' ')|title }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if task.user_name %}
+                                    <span class="user-chip">👤 {{ task.user_name }}</span>
+                                {% else %}
+                                    <span class="text-muted">Unassigned</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-muted text-sm">{{ task.created_at[:16] }}</td>
+                            <td style="text-align: right;">
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="btn-sm btn-icon" title="View details">👁️</a>
+                                    <a href="{{ url_for('tasks.edit_task', task_id=task.id) }}" class="btn-sm btn-icon" title="Edit task">✏️</a>
+                                    <a href="{{ url_for('tasks.delete_task_route', task_id=task.id) }}" 
+                                       class="btn-sm btn-icon btn-danger-icon" 
+                                       title="Delete task"
+                                       onclick="return confirm('Are you sure you want to permanently delete task #{{ task.id }}?');">
+                                        🗑️
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3>No tasks match your criteria</h3>
+            <p>Try clearing your search query or selecting a different status filter.</p>
+            <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-secondary">View All Tasks</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

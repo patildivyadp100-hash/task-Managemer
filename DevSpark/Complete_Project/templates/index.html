@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — TaskFlow{% endblock %}
+
+{% block content %}
+<div class="dashboard-hero">
+    <div class="hero-text">
+        <h1 class="hero-title">TaskFlow Dashboard</h1>
+        <p class="hero-subtitle">Complete SQLite & Flask REST Backend with full CRUD, validation, and production deployment.</p>
+    </div>
+    <div class="hero-actions">
+        <a href="{{ url_for('tasks.add_task') }}" class="btn btn-primary">+ Create New Task</a>
+        <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-secondary">Browse All Tasks</a>
+    </div>
+</div>
+
+<!-- Metrics Cards -->
+<section class="metrics-grid">
+    <div class="metric-card card-total">
+        <div class="metric-header">
+            <span class="metric-label">Total Tasks</span>
+            <span class="metric-icon">📋</span>
+        </div>
+        <div class="metric-number">{{ counts.total }}</div>
+        <a href="{{ url_for('tasks.list_tasks') }}" class="metric-link">View all &rarr;</a>
+    </div>
+
+    <div class="metric-card card-pending">
+        <div class="metric-header">
+            <span class="metric-label">Pending</span>
+            <span class="metric-icon">⏳</span>
+        </div>
+        <div class="metric-number">{{ counts.pending }}</div>
+        <a href="{{ url_for('tasks.list_tasks', status='pending') }}" class="metric-link">Filter pending &rarr;</a>
+    </div>
+
+    <div class="metric-card card-inprogress">
+        <div class="metric-header">
+            <span class="metric-label">In Progress</span>
+            <span class="metric-icon">🚀</span>
+        </div>
+        <div class="metric-number">{{ counts.in_progress }}</div>
+        <a href="{{ url_for('tasks.list_tasks', status='in_progress') }}" class="metric-link">Filter in progress &rarr;</a>
+    </div>
+
+    <div class="metric-card card-completed">
+        <div class="metric-header">
+            <span class="metric-label">Completed</span>
+            <span class="metric-icon">✅</span>
+        </div>
+        <div class="metric-number">{{ counts.completed }}</div>
+        <a href="{{ url_for('tasks.list_tasks', status='completed') }}" class="metric-link">Filter completed &rarr;</a>
+    </div>
+</section>
+
+<!-- Recent Tasks Section -->
+<section class="section-card">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">Recent Tasks</h2>
+            <p class="section-subtitle">The latest entries saved to the SQLite database.</p>
+        </div>
+        <a href="{{ url_for('tasks.list_tasks') }}" class="btn-link">See all tasks &rarr;</a>
+    </div>
+
+    {% if recent_tasks %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">ID</th>
+                        <th>Task Title</th>
+                        <th style="width: 140px;">Status</th>
+                        <th style="width: 180px;">Assigned To</th>
+                        <th style="width: 160px;">Created</th>
+                        <th style="width: 160px; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in recent_tasks %}
+                        <tr>
+                            <td class="font-mono text-muted">#{{ task.id }}</td>
+                            <td>
+                                <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="task-title-link">
+                                    {{ task.title }}
+                                </a>
+                                {% if task.description %}
+                                    <div class="task-desc-preview">{{ task.description[:65] }}{% if task.description|length > 65 %}...{% endif %}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge badge-{{ task.status }}">
+                                    {{ task.status|replace('_', ' ')|title }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if task.user_name %}
+                                    <span class="user-chip">👤 {{ task.user_name }}</span>
+                                {% else %}
+                                    <span class="text-muted">Unassigned</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-muted text-sm">{{ task.created_at[:16] }}</td>
+                            <td style="text-align: right;">
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="btn-sm btn-icon" title="View">👁️</a>
+                                    <a href="{{ url_for('tasks.edit_task', task_id=task.id) }}" class="btn-sm btn-icon" title="Edit">✏️</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📂</div>
+            <h3>No tasks found yet</h3>
+            <p>Your SQLite database is fresh and ready. Create your first task to get started!</p>
+            <a href="{{ url_for('tasks.add_task') }}" class="btn btn-primary">+ Add First Task</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

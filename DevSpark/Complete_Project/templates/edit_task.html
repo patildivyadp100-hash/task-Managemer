@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Task #{{ task.id }} — TaskFlow{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}">&larr; Back to Task #{{ task.id }}</a>
+</div>
+
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1 class="form-title">Edit Task #{{ task.id }}</h1>
+            <p class="form-subtitle">Update task details or transition its status (Module 22 CRUD).</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('tasks.edit_task', task_id=task.id) }}" novalidate>
+            {{ form.hidden_tag() }}
+
+            <!-- Title Field -->
+            <div class="form-group {% if form.title.errors %}has-error{% endif %}">
+                <label for="{{ form.title.id }}" class="form-label">
+                    {{ form.title.label.text }} <span class="required-star">*</span>
+                </label>
+                {{ form.title(class="form-control") }}
+                {% if form.title.errors %}
+                    <ul class="error-list">
+                        {% for error in form.title.errors %}
+                            <li class="error-item">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Description Field -->
+            <div class="form-group {% if form.description.errors %}has-error{% endif %}">
+                <label for="{{ form.description.id }}" class="form-label">
+                    {{ form.description.label.text }}
+                </label>
+                {{ form.description(class="form-control") }}
+                {% if form.description.errors %}
+                    <ul class="error-list">
+                        {% for error in form.description.errors %}
+                            <li class="error-item">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Status Dropdown (Module 14: SelectField) -->
+            <div class="form-group {% if form.status.errors %}has-error{% endif %}">
+                <label for="{{ form.status.id }}" class="form-label">
+                    {{ form.status.label.text }} <span class="required-star">*</span>
+                </label>
+                {{ form.status(class="form-control") }}
+                {% if form.status.errors %}
+                    <ul class="error-list">
+                        {% for error in form.status.errors %}
+                            <li class="error-item">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Assigned User Field -->
+            <div class="form-group {% if form.user_id.errors %}has-error{% endif %}">
+                <label for="{{ form.user_id.id }}" class="form-label">
+                    {{ form.user_id.label.text }}
+                </label>
+                {{ form.user_id(class="form-control") }}
+                {% if form.user_id.errors %}
+                    <ul class="error-list">
+                        {% for error in form.user_id.errors %}
+                            <li class="error-item">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                {{ form.submit(class="btn btn-primary btn-submit") }}
+                <a href="{{ url_for('tasks.task_detail', task_id=task.id) }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

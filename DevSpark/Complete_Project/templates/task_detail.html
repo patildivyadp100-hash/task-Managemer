@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Task #{{ task.id }} — {{ task.title }}{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="{{ url_for('tasks.list_tasks') }}">&larr; Back to all tasks</a>
+</div>
+
+<div class="detail-container">
+    <div class="detail-card">
+        <div class="detail-header">
+            <div>
+                <span class="font-mono text-muted">TASK #{{ task.id }}</span>
+                <h1 class="detail-title">{{ task.title }}</h1>
+            </div>
+            <div>
+                <span class="badge badge-lg badge-{{ task.status }}">
+                    {{ task.status|replace('_', ' ')|title }}
+                </span>
+            </div>
+        </div>
+
+        <div class="detail-body">
+            <h3 class="detail-section-title">Description</h3>
+            {% if task.description %}
+                <div class="detail-description">
+                    {{ task.description }}
+                </div>
+            {% else %}
+                <p class="text-muted italic">No description provided for this task.</p>
+            {% endif %}
+
+            <div class="detail-meta-grid">
+                <div class="meta-item">
+                    <span class="meta-label">Assigned User</span>
+                    <span class="meta-value">
+                        {% if task.user_name %}
+                            👤 <strong>{{ task.user_name }}</strong> ({{ task.user_email }})
+                        {% else %}
+                            <span class="text-muted">Unassigned</span>
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="meta-item">
+                    <span class="meta-label">Created At</span>
+                    <span class="meta-value font-mono">{{ task.created_at }}</span>
+                </div>
+
+                <div class="meta-item">
+                    <span class="meta-label">Status</span>
+                    <span class="meta-value font-bold text-{{ task.status }}">
+                        {{ task.status|replace('_', ' ')|title }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-footer">
+            <div class="detail-actions">
+                <a href="{{ url_for('tasks.edit_task', task_id=task.id) }}" class="btn btn-primary">✏️ Edit Task</a>
+                <a href="{{ url_for('tasks.delete_task_route', task_id=task.id) }}" 
+                   class="btn btn-danger"
+                   onclick="return confirm('Are you sure you want to permanently delete task #{{ task.id }}?');">
+                    🗑️ Delete Task
+                </a>
+            </div>
+            <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-secondary">Close</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

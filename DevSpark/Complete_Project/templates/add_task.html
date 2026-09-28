@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Task — TaskFlow{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="{{ url_for('tasks.list_tasks') }}">&larr; Back to all tasks</a>
+</div>
+
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1 class="form-title">Create New Task</h1>
+            <p class="form-subtitle">Add a new item to your SQLite task database. Title is required.</p>
+        </div>
+
+        <!-- WTForms Form (Module 14: CSRF & Form Validation) -->
+        <form method="POST" action="{{ url_for('tasks.add_task') }}" novalidate>
+            {{ form.hidden_tag() }}
+
+            <!-- Title Field -->
+            <div class="form-group {% if form.title.errors %}has-error{% endif %}">
+                <label for="{{ form.title.id }}" class="form-label">
+                    {{ form.title.label.text }} <span class="required-star">*</span>
+                </label>
+                {{ form.title(class="form-control") }}
+                {% if form.title.errors %}
+                    <ul class="error-list">
+                        {% for error in form.title.errors %}
+                            <li class="error-item">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <small class="form-help">Enter a concise, descriptive title (3-100 characters).</small>
+                {% endif %}
+            </div>
+
+            <!-- Description Field -->
+            <div class="form-group {% if form.description.errors %}has-error{% endif %}">
+                <label for="{{ form.description.id }}" class="form-label">
+                    {{ form.description.label.text }}
+                </label>
+                {{ form.description(class="form-control") }}
+                {% if form.description.errors %}
+                    <ul class="error-list">
+                        {% for error in form.description.errors %}
+                            <li class="error-item">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <small class="form-help">Optional: Markdown or plain text notes up to 500 characters.</small>
+                {% endif %}
+            </div>
+
+            <!-- Assigned User Field (Module 18: User–Task relationship) -->
+            <div class="form-group {% if form.user_id.errors %}has-error{% endif %}">
+                <label for="{{ form.user_id.id }}" class="form-label">
+                    {{ form.user_id.label.text }}
+                </label>
+                {{ form.user_id(class="form-control") }}
+                {% if form.user_id.errors %}
+                    <ul class="error-list">
+                        {% for error in form.user_id.errors %}
+                            <li class="error-item">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <small class="form-help">Select a user to assign this task to (Foreign Key constraint).</small>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                {{ form.submit(class="btn btn-primary btn-submit") }}
+                <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
